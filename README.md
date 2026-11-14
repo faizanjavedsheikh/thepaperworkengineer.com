@@ -4,20 +4,21 @@ The source for thepaperworkengineer.com: a static site built with Astro, Carbon 
 
 ## Run it on your computer
 
-You need Node.js 22 or newer.
+You need Node.js 22.23.4 or newer.
 
 ```bash
 npm install        # once
 npm run dev        # live preview at http://localhost:4321
 npm run build      # builds the finished site into dist/
 npm run preview    # serves the built site from dist/
+npm run check      # checks the code for mistakes (also runs before every deploy)
 ```
 
 ## Edit things
 
 | What | Where |
 |---|---|
-| Links (Calendly, Substack, LinkedIn, socials), privacy email | `src/data/site.ts` |
+| Links (Calendly, Substack, LinkedIn, socials), email, page dates | `src/data/site.ts` |
 | Homepage text | `src/pages/index.astro` |
 | 404 page | `src/pages/404.astro` |
 | Privacy note | `src/pages/privacy.astro` |
@@ -28,7 +29,7 @@ npm run preview    # serves the built site from dist/
 
 ### Substack posts (automatic)
 
-On every build, the site asks Substack for your posts (its posts API, or the RSS feed if that fails) and shows your 3 newest. If Substack can't be reached, it uses the saved list in `src/data/posts.json`.
+On every build, the site asks Substack for your posts (its posts API, or the RSS feed if that fails) and shows your 3 newest. If Substack can't be reached, or sends something unusable (a post with no title or date, a cover that isn't a picture), it skips it or uses the saved list in `src/data/posts.json`, so a bad day at Substack never breaks the site. When that happens, a yellow warning appears on that run's page in the repository's **Actions** tab.
 
 **Topic tags** come from one fixed list (`tags` in `src/data/posts.json`), so they stay consistent. Set a post's tag under `extras`, using its slug (the part of the post URL after `/p/`):
 
@@ -44,7 +45,7 @@ On every build, the site asks Substack for your posts (its posts API, or the RSS
 ### Instagram reels (by hand)
 
 1. Save the reel's cover still in `src/assets/reels/` (the 1080×1920 cover works as is).
-2. Add it to `src/data/reels.json` with its date. The homepage shows the newest 3 by date (change `reelsOnHomepage` in `src/data/site.ts`):
+2. Add it to `src/data/reels.json` with its date (`YYYY-MM-DD`). The homepage shows the newest 3 by date (change `reelsOnHomepage` in `src/data/site.ts`):
 
 ```json
 { "title": "CAPA in 60 seconds", "url": "https://www.instagram.com/p/XXXX/", "image": "XXXX.jpg", "date": "2026-11-20" }
@@ -60,7 +61,8 @@ On every build, the site asks Substack for your posts (its posts API, or the RSS
 2. In the repository: **Settings → Pages → Source: GitHub Actions.**
 3. The workflow in `.github/workflows/deploy.yml` builds and publishes the site on every push. It also rebuilds daily at 06:17 Lahore time, so new Substack posts appear on their own. You can also run it by hand from the **Actions** tab.
 4. Custom domain: `public/CNAME` already contains `thepaperworkengineer.com`. In **Settings → Pages**, enter the same domain and tick **Enforce HTTPS** once it's available.
-5. At Porkbun, add the DNS records GitHub lists for an apex domain: four `A` records for `@`, and a `CNAME` for `www` pointing to `<your-github-username>.github.io`. GitHub's guide, "Managing a custom domain for your GitHub Pages site", has the current IP addresses.
+5. The daily rebuild keeps itself switched on (GitHub normally pauses daily runs in a repository with no commits for 60 days). If a run ever fails, GitHub emails you.
+6. At Porkbun, add the DNS records GitHub lists for an apex domain: four `A` records for `@`, and a `CNAME` for `www` pointing to `<your-github-username>.github.io`. GitHub's guide, "Managing a custom domain for your GitHub Pages site", has the current IP addresses.
 
 ## What's in here
 
@@ -80,3 +82,17 @@ Fonts: IBM Plex Sans, © IBM Corp., SIL Open Font License 1.1 (`public/fonts/OFL
 3. **One address only**: in Porkbun, point `www` at `<your-github-username>.github.io` (CNAME) so `www.thepaperworkengineer.com` redirects to the main address. In the repo's *Settings → Pages*, tick *Enforce HTTPS*.
 4. **Links in**: put `https://thepaperworkengineer.com` in your Substack *About* page and publication settings, LinkedIn *Contact info* and *Featured*, and your Instagram, TikTok, X, Bluesky and Threads bios.
 5. **When you edit page text**, update `pageUpdated` in `src/data/site.ts` so the sitemap date stays honest.
+
+## Keeping phrases together
+
+Every page passes through `src/lib/keep-together.mjs` (wired up in `src/middleware.ts`), so phrases never split awkwardly at any screen size. It swaps the spaces inside short phrases for non-breaking spaces:
+
+- the last words of a paragraph or heading stay together, so no word sits alone on the last line;
+- a sentence's first word stays with the next one ("Leave with");
+- labels and numbers stay with what they label ("Details: Substack’s", "ISO 13485", "Nov 13, 2026");
+- small words stay with the word after them (a, the, of, to, and, I …);
+- hyphenated words never split at the hyphen ("30-minute").
+
+Joined phrases are capped in length (shorter in big headings and buttons) so nothing gets too wide for a small phone. It works on new text automatically, including Substack post and reel titles. For a longer phrase you want kept whole, wrap it in `<span class="tpe-nw">…</span>` (released only on screens under 320px).
+
+To apply the same rules to the design files: `node scripts/keep-together.mjs path/to/*.dc.html`.

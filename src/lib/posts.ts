@@ -40,6 +40,19 @@ function originalImage(url?: string | null) {
 
 type Raw = { title: string; url: string; date: string; cover?: string };
 
+/** Hosts the build may download cover pictures from (must match image.domains in astro.config.mjs). */
+const IMAGE_HOSTS = ['substack-post-media.s3.amazonaws.com', 'substackcdn.com'];
+const trustedImage = (url?: string) => {
+  try { const u = new URL(url!); return u.protocol === 'https:' && IMAGE_HOSTS.includes(u.hostname); } catch { return false; }
+};
+/** Keeps only posts with a real title, a Substack address and a valid date. */
+const valid = (p: Raw) =>
+  typeof p.title === 'string' && p.title.trim() !== '' && p.title !== 'null' && p.title !== 'undefined' &&
+  /^https:\/\/[^/]*substack\.com\/p\//.test(p.url) && !Number.isNaN(new Date(p.date).getTime());
+
+/** On GitHub, a warning also shows on the workflow run's summary page. */
+const warn = (msg: string) => console.warn((globalThis as any).process?.env?.GITHUB_ACTIONS ? `::warning title=Substack posts::${msg}` : `[posts] ${msg}`);
+
 const get = (url: string) =>
   fetch(url, { headers: { 'user-agent': 'thepaperworkengineer.com site build' }, signal: AbortSignal.timeout(15000) });
 
@@ -52,7 +65,7 @@ async function fromApi(): Promise<Raw[]> {
   return list
     .filter((i: any) => i.is_published !== false && i.audience !== 'only_paid' && i.canonical_url)
     .map((i: any) => ({
-      title: String(i.title).trim(),
+      title: typeof i.title === 'string' ? i.title.trim() : '',
       url: String(i.canonical_url).trim(),
       date: String(i.post_date),
       cover: originalImage(i.cover_image),
@@ -67,18 +80,19 @@ async function fromFeed(): Promise<Raw[]> {
   const items = parsed?.rss?.channel?.item;
   const list = Array.isArray(items) ? items : items ? [items] : [];
   return list.map((i: any) => ({
-    title: String(i.title).trim(),
-    url: String(i.link).trim(),
+    title: typeof i.title === 'string' ? i.title.trim() : '',
+    url: String(i.link ?? '').trim(),
     date: String(i.pubDate),
     cover: originalImage(i.enclosure?.['@_url']),
   }));
 }
 
-/** True if the image can be downloaded right now, so a missing file never breaks the build. */
+/** True if the address is a trusted host and really serves a picture right now, so a bad file never breaks the build. */
 async function reachable(url: string) {
+  if (!trustedImage(url)) return false;
   try {
     const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(10000) });
-    return res.ok;
+    return res.ok && (res.headers.get('content-type') ?? '').startsWith('image/');
   } catch {
     return false;
   }
@@ -92,15 +106,17 @@ export async function getPosts(): Promise<Post[]> {
   let raw: Raw[] | undefined;
   for (const [name, load] of [['API', fromApi], ['feed', fromFeed]] as const) {
     try {
-      raw = await load();
+      const list = (await load()).filter(valid);
+      if (!list.length) throw new Error('no usable posts');
+      raw = list;
       console.log(`[posts] ${raw.length} posts from the Substack ${name}`);
       break;
     } catch (err) {
-      console.warn(`[posts] Substack ${name} unavailable (${(err as Error).message})`);
+      warn(`Substack ${name} unavailable (${(err as Error).message})`);
     }
   }
   if (!raw) {
-    console.warn('[posts] using the saved list in src/data/posts.json');
+    warn('Substack could not be read, so the site shows the saved list in src/data/posts.json. New posts will appear once Substack is reachable again.');
     raw = data.fallback;
   }
   // A post without a cover can inherit the publication's image, which then repeats. Ignore repeats.
@@ -118,7 +134,7 @@ export async function getPosts(): Promise<Post[]> {
       if (tag && !allowedTags.has(tag)) console.warn(`[posts] tag "${tag}" on ${p.slug} is not in the tags list`);
       let cover = p.cover && coverCount.get(p.cover) === 1 ? p.cover : undefined;
       if (cover && !(await reachable(cover))) {
-        console.warn(`[posts] cover for ${p.slug} could not be downloaded; using a local picture`);
+        warn(`cover for ${p.slug} could not be used; showing a local picture instead`);
         cover = undefined;
       }
       return {

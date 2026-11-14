@@ -1,5 +1,5 @@
 {
-  "_readme": "Up to 4 reels, newest first. 'image' is a cover still saved in src/assets/reels/ (portrait works best). 'title' is optional: without it the tile shows the date. 'position' (optional) moves the crop, e.g. '50% 75%' to show more of the bottom. While this list is empty, the Reels section shows only the Instagram link.",
+  "_readme": "Your Instagram reels, in any order: the homepage shows the newest 3 by 'date' (YYYY-MM-DD). 'image' is a cover still saved in src/assets/reels/ (portrait works best). 'title' is optional. 'position' (optional) moves the crop, e.g. '50% 75%' to show more of the bottom. While this list is empty, the Reels section shows only the Instagram link.",
   "reels": [
     {
       "title": "I Inherited a QMS. Nobody Was Following It.",

@@ -6,9 +6,9 @@ import reels from '../data/reels.json';
 // lastmod is the last real change: a copy edit, a new post or a new reel. Not the build date,
 // because the site rebuilds daily and Google stops trusting dates that change without content changes.
 export async function GET() {
-  const day = (d: string | Date) => new Date(d).toISOString().slice(0, 10);
+  const day = (d?: string | Date) => { const t = d ? new Date(d) : null; return t && !Number.isNaN(t.getTime()) ? t.toISOString().slice(0, 10) : ''; };
   const posts = await getPosts();
-  const home = [site.pageUpdated.home, ...posts.map((p) => day(p.date)), ...reels.reels.map((r) => day(r.date))].sort().at(-1);
+  const home = [site.pageUpdated.home, ...posts.map((p) => day(p.date)), ...reels.reels.map((r) => day(r.date))].filter(Boolean).sort().at(-1);
   const pages: [string, string][] = [['/', home!], ['/privacy', site.pageUpdated.privacy]];
   const urls = pages
     .map(([p, mod]) => `  <url><loc>${new URL(p, site.url).href}</loc><lastmod>${mod}</lastmod></url>`)

@@ -14,11 +14,12 @@ interface Props {
 const { src, alt, class: cls, sizes, priority = false, style } = Astro.props;
 const remote = typeof src === 'string';
 // Only remote images need their size looked up; local ones already know it.
-const remoteProps = remote ? { inferSize: true } : {};
+// (typed loosely: Picture's types can't tell at check time which kind of src this is)
+const remoteProps: Record<string, unknown> = remote ? { inferSize: true } : {};
 const widths = [320, 480, 640, 960, 1280, 1680, 2048].filter((w) => remote || w <= (src as ImageMetadata).width);
 ---
 <Picture
-  src={src}
+  src={src as any}
   alt={alt}
   class={cls}
   style={style}

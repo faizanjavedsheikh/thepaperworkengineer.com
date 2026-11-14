@@ -92,7 +92,7 @@ const ld = {
     <meta name="twitter:site" content="@ThePaperworkEng" />
     <meta name="twitter:creator" content="@ThePaperworkEng" />
     <link rel="alternate" type="application/rss+xml" title="The Paperwork Engineer newsletter" href={site.substackFeed} />
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} />}
   </head>
   <body>
     <a class="tpe-skip" href="#main">Skip to main content</a>
@@ -102,7 +102,7 @@ const ld = {
         <div class="tpe-bar">
           <details class="tpe-menu">
             <summary aria-label="Menu"><Icon name="menu" class="tpe-ic-open" /><Icon name="close" class="tpe-ic-close" /></summary>
-            <nav aria-label="Sections">
+            <nav aria-label="Sections menu">
               <a href={`${home}#why`}>Why I do this</a>
               <a href={`${home}#writing`}>Writing</a>
               <a href={`${home}#reels`}>Reels</a>

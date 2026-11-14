@@ -6,16 +6,21 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "astro check"
   },
   "dependencies": {
     "@carbon/styles": "^1.119.0",
-    "@ibm/plex-sans": "^1.1.0",
-    "astro": "^7.4.11",
+    "astro": "^7.4.12",
     "fast-xml-parser": "^5.12.1",
+    "parse5": "^8.1.1",
     "sass": "^1.108.2"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.23.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "typescript": "^6.0.3"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "name": "thepaperworkengineer",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@carbon/styles": "^1.119.0",
+    "@ibm/plex-sans": "^1.1.0",
+    "astro": "^7.4.11",
+    "fast-xml-parser": "^5.12.1",
+    "sass": "^1.108.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

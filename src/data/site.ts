@@ -9,7 +9,7 @@ export const site = {
   substackFeed: 'https://thepaperworkengineer.substack.com/feed',
   substackSubscribe: 'https://thepaperworkengineer.substack.com/subscribe',
   instagram: 'https://www.instagram.com/the.paperwork.engineer/',
-  linkedin: 'https://www.linkedin.com/in/faizanjavedsheikh/',
+  linkedin: 'https://www.linkedin.com/in/faizanjavedsheikh',
   /** Public contact address, shown under "Let's talk" and on the privacy page. */
   email: 'faizan@thepaperworkengineer.com',
   /** Last real edit to each page's own text, for the sitemap. Update when you change the copy. */

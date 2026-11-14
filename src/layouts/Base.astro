@@ -3,17 +3,19 @@ import '../styles/global.scss';
 import { Image } from 'astro:assets';
 import Icon from '../components/Icon.astro';
 import { site, socials } from '../data/site';
-import logo from '../assets/brand/logo.jpg';
+import logo from '../assets/brand/logo.png';
 import saluting from '../assets/characters/saluting.jpg';
 
 interface Props {
   title: string;
   description: string;
+  /** Shorter description for link previews (about 110 characters); defaults to description. */
+  shareDescription?: string;
   path: string; // e.g. '/', '/privacy'
   noindex?: boolean;
   jsonLd?: boolean;
 }
-const { title, description, path, noindex = false, jsonLd = false } = Astro.props;
+const { title, description, shareDescription = description, path, noindex = false, jsonLd = false } = Astro.props;
 const canonical = new URL(path, site.url).href;
 // On the homepage, section links stay on the page; elsewhere they point back to it.
 const home = path === '/' ? '' : '/';
@@ -71,7 +73,7 @@ const ld = {
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
     <meta name="author" content={site.person} />
     <meta name="theme-color" content="#faf6f1" />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
@@ -81,7 +83,8 @@ const ld = {
     <meta property="og:site_name" content={site.name} />
     {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={shareDescription} />
+    <meta name="twitter:description" content={shareDescription} />
     <meta property="og:image" content={`${site.url}/og-image.jpg`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />

@@ -110,7 +110,7 @@ section[id] { scroll-margin-top: $spacing-09; }
   display: flex; align-items: center; gap: $spacing-04; min-height: $spacing-09; padding-right: $spacing-05;
   color: var(--cds-text-primary); text-decoration: none;
   &:hover { color: var(--cds-text-primary); }
-  img { width: $spacing-07; height: $spacing-07; border-radius: 0.4375rem; }
+  img { width: $spacing-07; height: $spacing-07; } // the logo file has its own rounded corners
 }
 .tpe-word { font-size: 1rem; font-weight: 600; white-space: nowrap; }
 .tpe-hlinks { display: none; align-items: stretch; }

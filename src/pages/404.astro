@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Art from '../components/Art.astro';
+import Icon from '../components/Icon.astro';
+import { getPosts } from '../lib/posts';
+import drawer from '../assets/characters/empty-drawer.jpg';
+
+const [latest] = await getPosts();
+---
+<Base
+  title="Page not found · The Paperwork Engineer"
+  description="This page failed its audit. There’s no record of it."
+  path="/404"
+  noindex
+>
+  <main id="main" class="tpe-page">
+    <section aria-labelledby="e-h">
+      <div class="tpe-wrap tpe-sec">
+        <div class="tpe-split">
+          <div class="tpe-stack">
+            <p class="tpe-eyebrow">Error 404 · Page not found</p>
+            <h1 id="e-h" class="tpe-h1">This page failed <span class="tpe-nw">its audit.</span></h1>
+            <p class="tpe-lede">We looked everywhere. There’s no record of it. And if it isn’t documented, <span class="tpe-nw">it didn’t happen.</span></p>
+            <p class="tpe-body"><strong class="tpe-strong">Root cause:</strong> probably a typo in the address, or an old link.<br /><strong class="tpe-strong">Corrective action:</strong> start again from <span class="tpe-nw">the homepage.</span></p>
+            <div class="tpe-links-row">
+              <a class="tpe-link" href="/">Go to the homepage <Icon name="arrow-right" /></a>
+              {latest && <a class="tpe-link" href={latest.url}>Read the latest post <Icon name="launch" /></a>}
+            </div>
+          </div>
+          <Art src={drawer} class="tpe-art" priority sizes="(min-width: 1920px) 30vw, (min-width: 66rem) min(40vw, 35rem), (min-width: 42rem) 33vw, calc(100vw - 2rem)" alt="The Paperwork Engineer holding a blank card, staring into an empty filing drawer" />
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

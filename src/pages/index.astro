@@ -1,0 +1,191 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Art from '../components/Art.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { getPosts } from '../lib/posts';
+import reelsData from '../data/reels.json';
+
+import waving from '../assets/characters/waving.jpg';
+import carrying from '../assets/characters/carrying-binders.jpg';
+import writing from '../assets/characters/writing-at-desk.jpg';
+import asleep from '../assets/characters/asleep-on-books.jpg';
+import clapper from '../assets/characters/clapperboard.jpg';
+import coffee from '../assets/characters/coffee-with-client.jpg';
+import faizan from '../assets/brand/faizan.jpg';
+
+const reelImages = import.meta.glob<{ default: ImageMetadata }>('../assets/reels/*.{jpg,jpeg,png,webp}', { eager: true });
+// Newest first (by date; any without a date go last), capped like the posts.
+const reels = [...(reelsData.reels as { title?: string; url: string; image: string; date?: string; position?: string }[])]
+  .sort((a, b) => (b.date ? Date.parse(b.date) : -Infinity) - (a.date ? Date.parse(a.date) : -Infinity))
+  .slice(0, site.reelsOnHomepage).map((r) => ({
+  ...r,
+  img: reelImages[`../assets/reels/${r.image}`]?.default,
+}));
+
+const posts = await getPosts();
+const fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+// Image sizes for the art columns (see global.scss .tpe-split)
+const heroSizes = '(min-width: 1920px) 30vw, (min-width: 66rem) min(40vw, 35rem), (min-width: 42rem) 33vw, calc(100vw - 2rem)';
+const sideSizes = '(min-width: 1920px) 30vw, (min-width: 66rem) min(40vw, 35rem), (min-width: 42rem) 33vw, calc(100vw - 2rem)';
+const headSizes = '(min-width: 1920px) 14vw, (min-width: 66rem) 16rem, (min-width: 42rem) 12rem, 1px';
+const cardSizes = '(min-width: 1920px) 28vw, (min-width: 66rem) 30vw, (min-width: 42rem) 30vw, calc(100vw - 4rem)';
+---
+<Base
+  title="The Paperwork Engineer · Medical Device QA/RA, Explained"
+  description="Medical device QA/RA in plain language: QMS, ISO 13485, CAPA, audits and FDA 510(k). A newsletter, short reels and free 30-minute calls with Faizan."
+  path="/"
+  jsonLd
+>
+  <main id="main">
+    <!-- Hero -->
+    <section id="top" aria-labelledby="hero-h">
+      <div class="tpe-wrap tpe-sec" style="padding-bottom: 0">
+        <div class="tpe-split">
+          <div class="tpe-stack" style="gap: 2rem">
+            <p class="tpe-eyebrow">A newsletter and reels by Faizan</p>
+            <h1 id="hero-h" class="tpe-h1">The inner workings of <span class="tpe-nw-sm"><span class="tpe-nw">medical device</span> QA/RA,</span> <span class="tpe-nw">minus the boredom.</span></h1>
+            <p class="tpe-lede">Short, honest lessons from inside <span class="tpe-nw">a medical device</span> quality system. For the newcomer <span class="tpe-nw">lost in acronyms,</span> and the veteran who has seen <span class="tpe-nw">every finding twice.</span></p>
+            <div class="tpe-btnset">
+              <a class="tpe-btn" href={site.calendly}>Book a free 30-minute call <Icon name="launch" /></a>
+              <a class="tpe-link" href="#writing">Read the newsletter <Icon name="arrow-down" /></a>
+            </div>
+          </div>
+          <Art src={waving} class="tpe-art" sizes={heroSizes} priority alt="The Paperwork Engineer, an origami figure in a mint hard hat and lilac lanyard, waving hello" />
+        </div>
+        <ul class="tpe-stats" aria-label="Background" style="margin-top: clamp(2rem, 1rem + 3vw, 4rem); margin-bottom: clamp(3rem, 2rem + 4vw, 6rem)">
+          <li><span class="tpe-stat-n">5 years</span><span class="tpe-stat-l">In <span class="tpe-nw">Class II</span> <span class="tpe-nw">medical device</span> QA/RA</span></li>
+          <li><span class="tpe-stat-n">510(k)</span><span class="tpe-stat-l">Led end to end, cleared a month early</span></li>
+          <li><span class="tpe-stat-n">&lt; 3 mo</span><span class="tpe-stat-l">QMS from nothing to <span class="tpe-nw">ISO 13485</span> certified</span></li>
+          <li><span class="tpe-stat-n">90%+</span><span class="tpe-stat-l">Of 23 CAPAs closed on time</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Why -->
+    <section id="why" aria-labelledby="why-h" style="background: var(--cds-layer-01); border-block: 1px solid var(--cds-border-subtle-01)">
+      <div class="tpe-wrap tpe-sec">
+        <div class="tpe-split tpe-split-r">
+          <Art src={carrying} class="tpe-art tpe-art-left" sizes={sideSizes} alt="The Paperwork Engineer carrying a tall stack of pastel binders" />
+          <div class="tpe-stack">
+            <p class="tpe-eyebrow">01 — Why I do this</p>
+            <h2 id="why-h" class="tpe-h2"><span class="tpe-nw-md">I trained to design <span class="tpe-nw">machines.</span></span> <span class="tpe-nw-md">I <span class="tpe-nw">ended up</span> <span class="tpe-nw">designing paperwork.</span></span></h2>
+            <p class="tpe-body">I’m a mechanical engineer by training. My first quality system wasn’t even mine. It was my boss’s, written for the FDA’s old <span class="tpe-nw">QSR and</span> <span class="tpe-nw">an older ISO 13485.</span></p>
+            <p class="tpe-body">He reviewed every procedure I rewrote. That’s where I learned to think in <span class="tpe-nw">risk, not checklists.</span></p>
+            <p class="tpe-body">Some of my procedures were unrealistic. We passed the audit anyway. Then our own internal audit caught them, and <span class="tpe-nw">we fixed them.</span></p>
+            <p class="tpe-body">Five years on, I lead a QA/RA team. Almost none of this was in a standard. So I write it down, one idea at a time, for the newcomer facing <span class="tpe-nw">a first audit</span> and the veteran <span class="tpe-nw">who’ll nod along.</span></p>
+            <a class="tpe-author" href={site.linkedin} rel="me">
+              <Image src={faizan} alt="Photo of Faizan" width={192} height={192} quality={80} />
+              <span style="display: flex; flex-direction: column; gap: 0.125rem">
+                <span class="tpe-author-name">Faizan <span class="tpe-muted" style="font-weight: 400">on LinkedIn</span> <Icon name="launch" size={16} /></span>
+                <span class="tpe-muted" style="font-size: 0.9375rem"><span class="tpe-nw">Head of QA/RA</span> · <span class="tpe-nw">ISO 13485 Lead Auditor</span> · Lahore</span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Writing -->
+    <section id="writing" aria-labelledby="writing-h">
+      <div class="tpe-wrap tpe-sec tpe-stack" style="gap: clamp(2rem, 1.5rem + 1.5vw, 2.5rem)">
+        <div class="tpe-sechead">
+          <Art src={writing} class="tpe-art-s" sizes={headSizes} alt="The Paperwork Engineer writing with an oversized pencil at a tiny mint desk" />
+          <div class="tpe-stack-s">
+            <p class="tpe-eyebrow">02 — The newsletter</p>
+            <h2 id="writing-h" class="tpe-h2">Latest from Substack</h2>
+            <p class="tpe-body tpe-muted">One idea per post. Real lessons from audits, CAPAs and submissions, with one takeaway <span class="tpe-nw">you can use tomorrow.</span></p>
+            <a class="tpe-link" href={site.substack}>All posts on Substack <Icon name="launch" /></a>
+          </div>
+        </div>
+        <ul class="tpe-cards">
+          {posts.map((p) => (
+            <li>
+              <a class="tpe-card" href={p.url}>
+                {p.image && <Art src={p.image} alt="" sizes={cardSizes} style={p.position ? `object-position: ${p.position}` : undefined} />}
+                {p.cover && <Art src={p.cover} alt="" sizes={cardSizes} style={p.position ? `object-position: ${p.position}` : undefined} />}
+                {p.tag && <span class="tpe-tag">{p.tag}</span>}
+                <h3 class="tpe-h3">{p.title}</h3>
+                <span class="tpe-meta"><time datetime={p.date.toISOString().slice(0, 10)}>{fmt.format(p.date)}</time><span style="color: var(--cds-link-primary); display: flex"><Icon name="launch" /></span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div class="tpe-sub">
+          <Art src={asleep} sizes="(min-width: 1920px) 28vw, (min-width: 42rem) 33vw, calc(100vw - 2rem)" alt="The Paperwork Engineer asleep on a pile of pastel books" />
+          <div class="tpe-sub-body">
+            <h3 class="tpe-h3" style="font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem); font-weight: 300"><span class="tpe-nw-md">Too tired to check Substack?</span> <span class="tpe-nw-md">Get the next post <span class="tpe-nw">in your inbox.</span></span></h3>
+            <p class="tpe-muted" style="margin: 0; font-size: 0.9375rem">Free. Unsubscribe in one click.</p>
+            <div class="tpe-btnset"><a class="tpe-btn" href={site.substackSubscribe}>Subscribe on Substack <Icon name="launch" /></a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reels -->
+    <section id="reels" aria-labelledby="reels-h" style="background: var(--cds-layer-01); border-top: 1px solid var(--cds-border-subtle-01)">
+      <div class="tpe-wrap tpe-sec tpe-stack" style="gap: clamp(2rem, 1.5rem + 1.5vw, 2.5rem)">
+        <div class="tpe-sechead">
+          <Art src={clapper} class="tpe-art-s" sizes={headSizes} alt="The Paperwork Engineer holding a pastel paper clapperboard" />
+          <div class="tpe-stack-s">
+            <p class="tpe-eyebrow">03 — On Instagram</p>
+            <h2 id="reels-h" class="tpe-h2">Paper-folded reels</h2>
+            <p class="tpe-body tpe-muted">Each post, folded into <span class="tpe-nw">a short origami video.</span> <span class="tpe-nw">Watch one between meetings.</span></p>
+            <a class="tpe-link" href={site.instagram}>Follow @the.paperwork.engineer <Icon name="launch" /></a>
+          </div>
+        </div>
+        {reels.length > 0 ? (
+          <ul class="tpe-reels" style={`--tpe-reel-cols: ${reels.length}`}>
+            {reels.map((r) => (
+              <li>
+                <a class="tpe-reel" href={r.url}>
+                  <span class="tpe-reel-m">
+                    {r.img && <Art src={r.img} alt="" sizes="(min-width: 1920px) 30vw, (min-width: 42rem) 32vw, 64vw" style={r.position ? `object-position: ${r.position}` : undefined} />}
+                    <span class="tpe-play"><Icon name="play" size={20} /></span>
+                  </span>
+                  <span class="tpe-reel-x">
+                    {r.title && <span class="tpe-reel-t">{r.title}<span class="tpe-sr"> (reel on Instagram)</span></span>}
+                    {r.date && <time class="tpe-reel-d" datetime={r.date.slice(0, 10)}>{fmt.format(new Date(r.date))}</time>}
+                    {!r.title && <span class="tpe-sr">Reel on Instagram</span>}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+    </section>
+
+    <!-- Let's talk -->
+    <section id="talk" class="tpe-dark" aria-labelledby="talk-h">
+      <div class="tpe-wrap tpe-sec tpe-stack" style="gap: clamp(2.5rem, 2rem + 2vw, 4rem)">
+        <div class="tpe-split tpe-split-r">
+          <Art src={coffee} class="tpe-art tpe-art-left" sizes={sideSizes} alt="The Paperwork Engineer at a small table over coffee with a client holding a messy bundle of papers, a neat document between them" />
+          <div class="tpe-stack">
+            <p class="tpe-eyebrow">04 — Work together</p>
+            <h2 id="talk-h" class="tpe-h2" style="font-size: clamp(2.25rem, 1.75rem + 2vw, 3.75rem)">Let’s talk.</h2>
+            <p class="tpe-lede">Stuck on a submission, <span class="tpe-nw">prepping for an audit,</span> or living with a QMS <span class="tpe-nw">that’s grown messy?</span> Book a <span class="tpe-nw">free 30-minute call.</span> Bring the problem. Leave with <span class="tpe-nw">an honest read on it</span> and <span class="tpe-nw">a clear next step.</span></p>
+            <p class="tpe-body tpe-muted">Fair warning: ask me to “just build a QMS” and my first question <span class="tpe-nw">will be,</span> <span class="tpe-nw">“At what cost?”</span></p>
+            <div class="tpe-btnset">
+              <a class="tpe-btn" href={site.calendly}>Book a free 30-minute call <Icon name="launch" /></a>
+            </div>
+            {site.email && <p class="tpe-body tpe-muted">Prefer email? <a class="tpe-email" href={`mailto:${site.email}`}>{site.email}</a></p>}
+          </div>
+        </div>
+        <div class="tpe-stack-s">
+          <h3 class="tpe-eyebrow" style="font-weight: 400">How I can help</h3>
+          <ul class="tpe-services">
+            <li><span class="tpe-svc">FDA 510(k) support</span><span class="tpe-svc-d">Get your submission cleared: strategy, drafting, and answers to FDA’s <span class="tpe-nw">Additional Information</span> requests</span></li>
+            <li><span class="tpe-svc">ISO 13485 QMS builds</span><span class="tpe-svc-d">A quality system your team will actually follow, <span class="tpe-nw">ready for certification</span></span></li>
+            <li><span class="tpe-svc">Supplier audits</span><span class="tpe-svc-d">An independent <span class="tpe-nw">ISO 13485</span> audit of a supplier, ending in a clear <span class="tpe-nw">go or no-go</span></span></li>
+            <li><span class="tpe-svc">eQMS and CSA validation</span><span class="tpe-svc-d">Move your records into an electronic system without losing a thing <span class="tpe-nw">(21 CFR Part 11, CSA)</span></span></li>
+            <li><span class="tpe-svc">Team training</span><span class="tpe-svc-d">Design controls, <span class="tpe-nw">risk management,</span> data integrity <span class="tpe-nw">(ALCOA++)</span> and the move from <span class="tpe-nw">CSV to CSA</span></span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>

@@ -1,0 +1,57 @@
+{
+  "_readme": "Optional extras for Substack posts, keyed by the post's URL slug (the part after /p/). 'tag' must be one of 'tags' below, so labels stay consistent. 'position' (optional) moves the picture's crop, e.g. '50% 60%'. Pictures come from each post's Substack cover. If a post has none (or it can't be downloaded), the site uses an image in src/assets/posts/ named after the slug, otherwise the default picture (src/assets/characters/reading.jpg). 'fallback' is used only when Substack can't be reached at build time.",
+  "extras": {
+    "your-qms-is-a-suit-stop-buying-it": {
+      "tag": "QMS"
+    },
+    "i-inherited-a-qms-nobody-was-following": {
+      "tag": "QMS",
+      "position": "50% 55%"
+    },
+    "i-built-a-qms-in-under-three-months": {
+      "tag": "QMS",
+      "position": "50% 62%"
+    },
+    "i-thought-there-was-one-standard": {
+      "tag": "Standards",
+      "position": "50% 55%"
+    }
+  },
+  "fallback": [
+    {
+      "title": "Your QMS Is a Suit. Stop Buying It Off the Rack.",
+      "url": "https://thepaperworkengineer.substack.com/p/your-qms-is-a-suit-stop-buying-it",
+      "date": "2026-11-11T15:05:52Z",
+      "cover": "https://substack-post-media.s3.amazonaws.com/public/images/b7906dc1-dc71-4264-be30-7ed1e68e1e37_2048x2048.jpeg"
+    },
+    {
+      "title": "I Inherited a QMS. Nobody Was Following It.",
+      "url": "https://thepaperworkengineer.substack.com/p/i-inherited-a-qms-nobody-was-following",
+      "date": "2026-11-09T02:58:30Z",
+      "cover": "https://substack-post-media.s3.amazonaws.com/public/images/96d1c1a7-5696-4920-b98a-5a9205ab827c_2048x2048.jpeg"
+    },
+    {
+      "title": "I Built a QMS in Under Three Months. Here’s What It Cost.",
+      "url": "https://thepaperworkengineer.substack.com/p/i-built-a-qms-in-under-three-months",
+      "date": "2026-11-02T16:31:29Z",
+      "cover": "https://substack-post-media.s3.amazonaws.com/public/images/897e4de2-978c-48db-a001-18ac34ca774f_2048x2048.jpeg"
+    },
+    {
+      "title": "I Thought There Was One Standard",
+      "url": "https://thepaperworkengineer.substack.com/p/i-thought-there-was-one-standard",
+      "date": "2026-10-11T16:39:08Z",
+      "cover": "https://substack-post-media.s3.amazonaws.com/public/images/5d1f0279-128d-4a22-b653-b5564d157c16_2048x2048.jpeg"
+    }
+  ],
+  "tags": [
+    "Audits",
+    "CAPA",
+    "Design controls",
+    "QMS",
+    "Risk",
+    "Standards",
+    "Submissions",
+    "Suppliers",
+    "Training"
+  ]
+}

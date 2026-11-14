@@ -1,0 +1,157 @@
+---
+import '../styles/global.scss';
+import { Image } from 'astro:assets';
+import Icon from '../components/Icon.astro';
+import { site, socials } from '../data/site';
+import logo from '../assets/brand/logo.jpg';
+import saluting from '../assets/characters/saluting.jpg';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string; // e.g. '/', '/privacy'
+  noindex?: boolean;
+  jsonLd?: boolean;
+}
+const { title, description, path, noindex = false, jsonLd = false } = Astro.props;
+const canonical = new URL(path, site.url).href;
+// On the homepage, section links stay on the page; elsewhere they point back to it.
+const home = path === '/' ? '' : '/';
+
+const org = `${site.url}/#brand`;
+const person = `${site.url}/#faizan`;
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      // Site name in Google results comes from this block on the homepage.
+      '@type': 'WebSite', '@id': `${site.url}/#website`, url: `${site.url}/`, name: site.name,
+      alternateName: ['Paperwork Engineer', 'thepaperworkengineer.com'],
+      description: 'The inner workings of medical device QA/RA, minus the boredom.', inLanguage: 'en',
+      publisher: { '@id': org },
+    },
+    {
+      // The brand: logo, social accounts and the consulting offer. Online only, so Organization rather than LocalBusiness.
+      '@type': 'Organization', '@id': org, name: site.name, url: `${site.url}/`,
+      logo: { '@type': 'ImageObject', url: `${site.url}/logo-512.png`, width: 512, height: 512 },
+      image: `${site.url}/og-image.jpg`,
+      description: 'Medical device QA/RA explained in plain language, plus consulting: FDA 510(k), ISO 13485 QMS builds, supplier audits, eQMS and CSA validation, and team training.',
+      founder: { '@id': person },
+      email: site.email,
+      areaServed: 'Worldwide',
+      knowsLanguage: 'en',
+      sameAs: [...socials.map((s) => s.href).filter((h) => !h.includes('linkedin.com')), 'https://substack.com/@thepaperworkengineer'],
+      makesOffer: ['FDA 510(k) support', 'ISO 13485 QMS builds', 'Third-party ISO 13485 supplier audits', 'eQMS and CSA validation', 'QA/RA team training']
+        .map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name, provider: { '@id': org } } })),
+      potentialAction: { '@type': 'ScheduleAction', name: 'Book a free 30-minute call', target: site.calendly },
+    },
+    {
+      '@type': 'Person', '@id': person, name: site.person, url: `${site.url}/`,
+      image: `${site.url}/faizan.jpg`, email: site.email, jobTitle: 'Head of QA/RA, medical devices',
+      description: 'Mechanical engineer turned medical device QA/RA lead and ISO 13485 Lead Auditor.',
+      homeLocation: { '@type': 'Place', name: 'Lahore, Pakistan' },
+      hasCredential: { '@type': 'EducationalOccupationalCredential', name: 'CQI and IRCA certified ISO 13485:2016 Lead Auditor' },
+      memberOf: { '@type': 'Organization', name: 'Regulatory Affairs Professionals Society (RAPS)' },
+      knowsAbout: ['Medical device quality assurance', 'Medical device regulatory affairs', 'ISO 13485', 'Quality management systems',
+        'FDA 510(k)', 'CAPA', 'ISO 14971 risk management', 'Design controls', '21 CFR Part 11', 'Computer software assurance (CSA)', 'Supplier audits'],
+      sameAs: [site.linkedin],
+    },
+  ],
+};
+
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+    <meta name="author" content={site.person} />
+    <meta name="theme-color" content="#faf6f1" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href="/fonts/IBMPlexSans-Light-Latin1.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/IBMPlexSans-Regular-Latin1.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${site.url}/og-image.jpg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="The Paperwork Engineer, an origami figure in a mint hard hat, hands on hips" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ThePaperworkEng" />
+    <meta name="twitter:creator" content="@ThePaperworkEng" />
+    <link rel="alternate" type="application/rss+xml" title="The Paperwork Engineer newsletter" href={site.substackFeed} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+  </head>
+  <body>
+    <a class="tpe-skip" href="#main">Skip to main content</a>
+
+    <header class="tpe-header">
+      <div class="tpe-wrap">
+        <div class="tpe-bar">
+          <details class="tpe-menu">
+            <summary aria-label="Menu"><Icon name="menu" class="tpe-ic-open" /><Icon name="close" class="tpe-ic-close" /></summary>
+            <nav aria-label="Sections">
+              <a href={`${home}#why`}>Why I do this</a>
+              <a href={`${home}#writing`}>Writing</a>
+              <a href={`${home}#reels`}>Reels</a>
+              <a href={`${home}#talk`}>Let’s talk</a>
+            </nav>
+          </details>
+          <a class="tpe-brand" href={path === '/' ? '#top' : '/'} aria-label={path === '/' ? 'The Paperwork Engineer, back to top' : 'The Paperwork Engineer, home'}>
+            <Image src={logo} alt="" width={96} height={96} loading="eager" />
+            <span class="tpe-word">The Paperwork Engineer</span>
+          </a>
+          <nav class="tpe-hlinks" aria-label="Sections">
+            <a href={`${home}#why`}>Why</a>
+            <a href={`${home}#writing`}>Writing</a>
+            <a href={`${home}#reels`}>Reels</a>
+          </nav>
+          <a class="tpe-hcta" href={`${home}#talk`}>Let’s talk</a>
+        </div>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="tpe-dark tpe-foot">
+      <div class="tpe-wrap tpe-foot-in">
+        <div class="tpe-foot-id">
+          <Image src={saluting} alt="" width={216} height={216} />
+          <div style="display: flex; flex-direction: column; gap: 0.25rem">
+            <span style="color: var(--cds-g100-text-primary)"><span class="tpe-nw">Thanks for stopping by.</span> <span class="tpe-nw">Go file something.</span></span>
+            <span class="tpe-muted">© {new Date().getFullYear()} The Paperwork Engineer · <a class="tpe-nw" href="/privacy">Privacy note</a></span>
+          </div>
+        </div>
+        <nav aria-label="Social">
+          <ul class="tpe-social">
+            {socials.map((s) => <li><a href={s.href} rel="me">{s.label}</a></li>)}
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      // Close the phone menu after choosing a section.
+      document.querySelectorAll<HTMLAnchorElement>('.tpe-menu nav a').forEach((a) =>
+        a.addEventListener('click', () => a.closest('details')?.removeAttribute('open')),
+      );
+      // Close it with Escape, returning focus to the menu button.
+      document.addEventListener('keydown', (e) => {
+        const menu = document.querySelector<HTMLDetailsElement>('.tpe-menu[open]');
+        if (e.key === 'Escape' && menu) { menu.removeAttribute('open'); menu.querySelector('summary')?.focus(); }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "_readme": "Up to 4 reels, newest first. 'image' is a cover still saved in src/assets/reels/ (portrait works best). 'title' is optional: without it the tile shows the date. 'position' (optional) moves the crop, e.g. '50% 75%' to show more of the bottom. While this list is empty, the Reels section shows only the Instagram link.",
+  "reels": [
+    {
+      "title": "I Inherited a QMS. Nobody Was Following It.",
+      "url": "https://www.instagram.com/p/DfsAckJCuJy/",
+      "image": "DfsAckJCuJy.jpg",
+      "date": "2026-11-13",
+      "position": "50% 72%"
+    },
+    {
+      "title": "I Built a QMS in Under Three Months. Here’s What It Cost.",
+      "url": "https://www.instagram.com/p/Dflo_U3CQgD/",
+      "image": "Dflo_U3CQgD.jpg",
+      "date": "2026-11-11",
+      "position": "50% 50%"
+    },
+    {
+      "title": "I Thought There Was One Standard",
+      "url": "https://www.instagram.com/p/Dfg6OfDIiSY/",
+      "image": "Dfg6OfDIiSY.jpg",
+      "date": "2026-11-09",
+      "position": "50% 50%"
+    }
+  ]
+}

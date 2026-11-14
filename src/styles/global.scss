@@ -1,0 +1,331 @@
+// The Paperwork Engineer — global styles
+//
+// Built on Carbon foundations:
+//   - spacing:     Carbon spacing tokens ($spacing-01 … $spacing-13)
+//   - breakpoints: Carbon 2x Grid breakpoints via the Carbon breakpoint mixin
+//                  (sm 20rem, md 42rem, lg 66rem, xlg 82rem, max 99rem)
+//   - color:       Carbon token names, set to the brand palette (cream, lilac, mint)
+//   - type:        IBM Plex Sans, Carbon fluid heading approach,
+//                  body sizes adjusted per the Practical Typography audit
+@use '@carbon/styles/scss/spacing' as *;
+@use '@carbon/styles/scss/breakpoint' as *;
+
+// ---------- Fonts (self-hosted IBM Plex, SIL OFL 1.1) ----------
+$plex-range: U+0000, U+000D, U+0020-007E, U+00A0-00A3, U+00A4-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC,
+  U+2013-2014, U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2039-203A, U+2044, U+2074, U+20AC, U+2122,
+  U+2212, U+FB01-FB02;
+@each $name, $weight in ('Light': 300, 'Regular': 400, 'SemiBold': 600) {
+  @font-face {
+    font-family: 'IBM Plex Sans';
+    font-style: normal;
+    font-weight: $weight;
+    font-display: swap;
+    src: url('/fonts/IBMPlexSans-#{$name}-Latin1.woff2') format('woff2');
+    unicode-range: $plex-range;
+  }
+}
+
+// ---------- Theme: Carbon token names, brand values ----------
+:root {
+  --cds-background: #faf6f1;
+  --cds-background-hover: #efe4d8;
+  --cds-layer-01: #f3ebe1;
+  --cds-layer-hover-01: #e9dccd;
+  --cds-border-subtle-01: #e3d6c7;
+  --cds-border-strong-01: #8d8d8d;
+  --cds-field-01: #ffffff;
+  --cds-text-primary: #161616;
+  --cds-text-secondary: #525252;
+  --cds-link-primary: #5b4a8a;
+  --cds-link-primary-hover: #4a3b75;
+  --cds-button-primary: #5b4a8a;
+  --cds-button-primary-hover: #4a3b75;
+  --cds-focus: #5b4a8a;
+  --cds-tag-background-purple: #e6dff5;
+  --cds-tag-color-purple: #3f3170;
+  // Gray 100 values for the dark band
+  --cds-g100-background: #161616;
+  --cds-g100-text-primary: #f4f4f4;
+  --cds-g100-text-secondary: #c6c6c6;
+  --cds-g100-border-subtle: #393939;
+  --tpe-cta-on-dark: #b8a9dc;
+  --tpe-cta-on-dark-hover: #c9bde6;
+}
+
+// ---------- Base ----------
+*, *::before, *::after { box-sizing: border-box; }
+// rem everywhere, so the whole page scales evenly on 4K/8K screens
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+@media (min-width: 1920px) { html { font-size: clamp(16px, calc(100vw / 120), 48px); } }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0;
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--cds-text-primary);
+  background: var(--cds-background);
+  line-height: 1.45;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; height: auto; display: block; }
+picture { display: contents; } // let the <img> inside take part in grid/flex layout
+picture > source { display: none; }
+// icons scale with the page (Carbon 16/20/24 px at the default size)
+svg[width='16'] { width: 1rem; height: 1rem; }
+svg[width='20'] { width: 1.25rem; height: 1.25rem; }
+svg[width='24'] { width: 1.5rem; height: 1.5rem; } // …without its <source> tags taking grid cells
+a { color: var(--cds-link-primary); }
+a:hover { color: var(--cds-link-primary-hover); }
+:focus-visible { outline: 2px solid var(--cds-focus); outline-offset: -2px; }
+.tpe-dark :focus-visible { outline-color: #ffffff; }
+.tpe-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+// ---------- Carbon 2x Grid container ----------
+.tpe-wrap {
+  max-width: 99rem;
+  margin-inline: auto;
+  padding-inline: $spacing-05;
+  @include breakpoint(md) { padding-inline: $spacing-07; }
+}
+.tpe-sec { padding-block: clamp(#{$spacing-09}, #{$spacing-07} + 4vw, #{$spacing-12}); }
+section[id] { scroll-margin-top: $spacing-09; }
+
+// ---------- Skip link ----------
+.tpe-skip {
+  position: absolute; left: -999rem; top: 0; z-index: 50;
+  background: var(--cds-g100-background); color: #ffffff;
+  padding: $spacing-04 $spacing-05; font-size: 0.875rem;
+  &:focus { left: 0; color: #ffffff; }
+}
+
+// ---------- Header (Carbon UI shell: 48px; name, then links left-justified; menu on narrow screens) ----------
+.tpe-header {
+  background: var(--cds-background);
+  border-bottom: 1px solid var(--cds-border-subtle-01);
+  position: sticky; top: 0; z-index: 10;
+}
+.tpe-bar { display: flex; align-items: center; min-height: $spacing-09; }
+.tpe-brand {
+  display: flex; align-items: center; gap: $spacing-04; min-height: $spacing-09; padding-right: $spacing-05;
+  color: var(--cds-text-primary); text-decoration: none;
+  &:hover { color: var(--cds-text-primary); }
+  img { width: $spacing-07; height: $spacing-07; border-radius: 0.4375rem; }
+}
+.tpe-word { font-size: 1rem; font-weight: 600; white-space: nowrap; }
+.tpe-hlinks { display: none; align-items: stretch; }
+.tpe-hlinks a, .tpe-hcta {
+  display: flex; align-items: center; min-height: $spacing-09; padding-inline: $spacing-05;
+  font-size: 1rem; color: var(--cds-text-primary); text-decoration: none; white-space: nowrap;
+}
+.tpe-hlinks a:hover { background: var(--cds-background-hover); color: var(--cds-text-primary); }
+.tpe-hlinks a[aria-current='page'] { box-shadow: inset 0 -3px 0 var(--cds-link-primary); }
+.tpe-hcta { margin-left: auto; color: var(--cds-link-primary); gap: $spacing-03;
+  &:hover { background: var(--cds-background-hover); color: var(--cds-link-primary-hover); } }
+.tpe-hlinks a:focus-visible, .tpe-hcta:focus-visible { text-decoration: underline; }
+@include breakpoint(md) { .tpe-hlinks { display: flex; } .tpe-menu { display: none; } }
+@include breakpoint-down(md) { .tpe-hcta { display: none; } }
+.tpe-menu {
+  margin-left: -$spacing-05;
+  summary {
+    list-style: none; display: flex; align-items: center; justify-content: center;
+    width: $spacing-09; height: $spacing-09; cursor: pointer; color: var(--cds-text-primary);
+    &::-webkit-details-marker { display: none; }
+    &:hover { background: var(--cds-background-hover); }
+  }
+  .tpe-ic-close { display: none; }
+  &[open] { .tpe-ic-open { display: none; } .tpe-ic-close { display: block; } summary { background: var(--cds-background-hover); } }
+  nav {
+    position: absolute; left: 0; right: 0; top: $spacing-09;
+    background: var(--cds-background); border-bottom: 1px solid var(--cds-border-subtle-01); padding-block: $spacing-03;
+  }
+  nav a {
+    display: flex; align-items: center; min-height: $spacing-09; padding-inline: $spacing-05;
+    font-size: 1.125rem; color: var(--cds-text-primary); text-decoration: none;
+    &:hover { background: var(--cds-background-hover); color: var(--cds-text-primary); }
+  }
+}
+
+// ---------- Buttons and links (Carbon large expressive button; standalone link) ----------
+.tpe-btn {
+  display: inline-flex; align-items: center; justify-content: space-between; gap: $spacing-09;
+  min-height: $spacing-09; padding: 0 $spacing-05; border: 0;
+  font: inherit; font-size: 1rem; text-decoration: none; cursor: pointer;
+  background: var(--cds-button-primary); color: #ffffff;
+  &:hover { background: var(--cds-button-primary-hover); color: #ffffff; }
+  svg { flex: none; }
+}
+.tpe-link {
+  display: inline-flex; align-items: center; gap: $spacing-03; min-height: $spacing-09;
+  font-size: 1.125rem; color: var(--cds-link-primary); text-decoration: none; align-self: flex-start;
+  &:hover, &:focus-visible { color: var(--cds-link-primary-hover); text-decoration: underline; }
+  svg { flex: none; }
+}
+.tpe-btnset {
+  display: flex; flex-wrap: wrap; align-items: center; gap: $spacing-03 $spacing-07;
+  > * { flex: 1 1 12rem; }
+  @include breakpoint(md) { > * { flex: 0 0 auto; } }
+}
+
+// ---------- Type ----------
+.tpe-eyebrow { margin: 0; font-size: 0.9375rem; line-height: 1.3; font-weight: 400; color: var(--cds-text-secondary); }
+.tpe-h1 { margin: 0; font-size: clamp(1.875rem, 1.25rem + 2.9vw, 4.25rem); line-height: 1.15; font-weight: 300; letter-spacing: -0.01em; max-width: 18em; }
+.tpe-h2 { margin: 0; font-size: clamp(2rem, 1.6rem + 1.25vw, 2.625rem); line-height: 1.2; font-weight: 300; max-width: 22em; }
+.tpe-h3 { margin: 0; font-size: 1.25rem; line-height: 1.4; font-weight: 400; }
+.tpe-h1, .tpe-h2, .tpe-h3 { text-wrap: balance; }
+.tpe-lede { margin: 0; font-size: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem); line-height: 1.4; color: var(--cds-text-secondary); max-width: 34em; text-wrap: pretty; }
+.tpe-body { margin: 0; font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem); line-height: 1.45; max-width: 36em; text-wrap: pretty; }
+.tpe-body + .tpe-body { margin-top: -$spacing-04; } // paragraphs about 9pt apart; headings keep their space
+// keep a phrase on one line
+.tpe-nw { white-space: nowrap; }
+@media (max-width: 20rem) { .tpe-nw { white-space: normal; } } // folded-phone cover screens
+@include breakpoint(md) { .tpe-nw-sm { white-space: nowrap; } }
+@include breakpoint(lg) { .tpe-nw-md { white-space: nowrap; } }
+.tpe-muted { color: var(--cds-text-secondary); }
+.tpe-strong { font-weight: 600; }
+.tpe-stack { display: flex; flex-direction: column; gap: $spacing-06; }
+.tpe-stack-s { display: flex; flex-direction: column; gap: $spacing-04; }
+
+// ---------- Layouts ----------
+.tpe-split {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(#{$spacing-07}, #{$spacing-05} + 3vw, #{$spacing-10}); align-items: center;
+  @include breakpoint(md) { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  @include breakpoint(lg) { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+.tpe-split-r {
+  @include breakpoint(md) { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  @include breakpoint(lg) { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+}
+.tpe-art { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; } // phones: full width inside the page margins
+@include breakpoint-down(md) { .tpe-art-left { order: 2; } }
+@include breakpoint(md) { .tpe-art { max-width: 35rem; justify-self: end; } .tpe-art-left { justify-self: start; } }
+.tpe-sechead {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(#{$spacing-07}, #{$spacing-05} + 3vw, #{$spacing-10}); align-items: center;
+  .tpe-art-s { display: none; aspect-ratio: 1 / 1; object-fit: cover; }
+  @include breakpoint(md) { grid-template-columns: auto minmax(0, 1fr); .tpe-art-s { display: block; width: 12rem; } }
+  @include breakpoint(lg) { .tpe-art-s { width: 16rem; } }
+}
+
+// ---------- Stats ----------
+.tpe-stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px;
+  background: var(--cds-border-subtle-01); border: 1px solid var(--cds-border-subtle-01);
+  margin: 0; padding: 0; list-style: none;
+  @include breakpoint(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  li { background: var(--cds-layer-01); padding: $spacing-06; display: flex; flex-direction: column; gap: $spacing-03; }
+}
+.tpe-stat-n { font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem); font-weight: 300; line-height: 1.2; }
+.tpe-stat-l { font-size: 0.9375rem; line-height: 1.35; color: var(--cds-text-secondary); }
+
+// ---------- Author link ----------
+.tpe-author {
+  display: flex; align-items: center; gap: $spacing-05; padding-top: $spacing-03; align-self: flex-start;
+  color: var(--cds-text-primary); text-decoration: none;
+  img { width: $spacing-10; height: $spacing-10; border-radius: 50%; object-fit: cover; flex: none;
+    box-shadow: 0 0 0 2px var(--cds-layer-01), 0 0 0 3px var(--cds-border-subtle-01); }
+  &:hover img { box-shadow: 0 0 0 2px var(--cds-layer-01), 0 0 0 4px var(--cds-link-primary); }
+  &:hover .tpe-author-name, &:focus-visible .tpe-author-name { text-decoration: underline; }
+}
+.tpe-author-name { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 1.0625rem; font-weight: 600; color: var(--cds-text-primary);
+  svg { color: var(--cds-link-primary); } }
+
+// ---------- Post cards (Carbon clickable tile) ----------
+.tpe-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: $spacing-05; margin: 0; padding: 0; list-style: none; }
+.tpe-card {
+  height: 100%; background: var(--cds-layer-01); padding: $spacing-05 $spacing-05 $spacing-06;
+  display: flex; flex-direction: column; gap: $spacing-05; color: var(--cds-text-primary); text-decoration: none;
+  &:hover { background: var(--cds-layer-hover-01); color: var(--cds-text-primary); }
+  img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+}
+.tpe-tag {
+  align-self: flex-start; min-height: $spacing-06; padding: 0 $spacing-03; border-radius: $spacing-05;
+  background: var(--cds-tag-background-purple); color: var(--cds-tag-color-purple); font-size: 0.875rem;
+  display: inline-flex; align-items: center;
+}
+.tpe-meta { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: var(--cds-text-secondary); }
+
+// ---------- Subscribe band ----------
+.tpe-sub {
+  display: grid; grid-template-columns: minmax(0, 1fr); background: var(--cds-layer-01);
+  @include breakpoint(md) { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  img { width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+    @include breakpoint(md) { aspect-ratio: auto; min-height: 14rem; } }
+}
+.tpe-sub-body { align-self: center; padding: clamp(#{$spacing-06}, #{$spacing-05} + 1.5vw, #{$spacing-07}); display: flex; flex-direction: column; gap: $spacing-05; }
+
+// ---------- Reels ----------
+.tpe-reels {
+  // one column per reel (up to 3) from tablet up; on phones a swipeable row of larger tiles
+  display: grid; grid-template-columns: repeat(var(--tpe-reel-cols, 4), minmax(0, 1fr)); gap: $spacing-05; margin: 0; padding: 0; list-style: none;
+  @include breakpoint-down(md) {
+    grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 64%; gap: $spacing-04;
+    overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+    margin-inline: -$spacing-05; padding-inline: $spacing-05; scroll-padding-inline: $spacing-05; padding-bottom: $spacing-03;
+    > li { scroll-snap-align: start; }
+  }
+}
+.tpe-reel {
+  // cover on top, title and date underneath (like the post cards)
+  position: relative; display: flex; flex-direction: column; gap: $spacing-04; color: var(--cds-text-primary); text-decoration: none;
+  &:hover { color: var(--cds-text-primary); }
+  &:hover .tpe-reel-m { outline: 2px solid var(--cds-text-primary); outline-offset: -2px; }
+  &:hover .tpe-reel-t { text-decoration: underline; }
+}
+.tpe-reel-m {
+  position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: var(--cds-layer-hover-01);
+  img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+}
+.tpe-play {
+  // top-right corner, like Instagram's own reel marker, so it never covers the subject
+  position: absolute; right: $spacing-04; top: $spacing-04;
+  width: $spacing-07; height: $spacing-07; border-radius: 50%; background: rgba(255, 255, 255, 0.9);
+  display: flex; align-items: center; justify-content: center;
+}
+.tpe-reel-x { display: flex; flex-direction: column; gap: $spacing-02; }
+.tpe-reel-t { font-size: 1rem; line-height: 1.35; text-wrap: balance; }
+.tpe-reel-d { font-size: 0.875rem; line-height: 1.3; color: var(--cds-text-secondary); }
+.tpe-reels-empty {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: $spacing-06; align-items: center;
+  background: #ffffff; padding: $spacing-06;
+  @include breakpoint(md) { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+  img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; max-width: 20rem; }
+}
+
+// ---------- Dark band (Carbon Gray 100) ----------
+.tpe-dark {
+  background: var(--cds-g100-background); color: var(--cds-g100-text-primary);
+  .tpe-eyebrow, .tpe-muted, .tpe-lede { color: var(--cds-g100-text-secondary); }
+  a:not(.tpe-btn) { color: var(--cds-g100-text-secondary); }
+  a:not(.tpe-btn):hover { color: #ffffff; }
+  .tpe-btn { background: var(--tpe-cta-on-dark); color: var(--cds-text-primary); min-height: $spacing-10;
+    &:hover { background: var(--tpe-cta-on-dark-hover); color: var(--cds-text-primary); } }
+}
+.tpe-services {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px;
+  background: var(--cds-g100-border-subtle); border: 1px solid var(--cds-g100-border-subtle);
+  margin: 0; padding: 0; list-style: none;
+  @include breakpoint(md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @include breakpoint(xlg) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  li { background: var(--cds-g100-background); padding: $spacing-06; display: flex; flex-direction: column; gap: $spacing-03; }
+}
+.tpe-svc { font-size: 1.125rem; line-height: 1.35; }
+.tpe-svc-d { font-size: 0.9375rem; line-height: 1.4; color: var(--cds-g100-text-secondary); }
+
+// ---------- Footer ----------
+.tpe-foot { border-top: 1px solid var(--cds-g100-border-subtle); }
+.tpe-foot-in { padding-block: $spacing-07; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: $spacing-06; font-size: 0.875rem; }
+.tpe-foot-id { display: flex; align-items: center; gap: $spacing-05;
+  img { width: 4.5rem; height: 4.5rem; object-fit: cover; } }
+.tpe-social { display: flex; flex-wrap: wrap; gap: 0 $spacing-02; margin: 0; padding: 0; list-style: none;
+  a { display: inline-flex; align-items: center; min-height: $spacing-09; padding-inline: $spacing-03; font-size: 1rem; text-decoration: none;
+    &:hover, &:focus-visible { text-decoration: underline; } } }
+
+// ---------- Sub-pages (404, privacy) ----------
+.tpe-page { min-height: calc(100vh - 11rem); }
+.tpe-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: $spacing-06; max-width: 36em;
+  li { display: flex; flex-direction: column; gap: $spacing-02; }
+  h2 { margin: 0; font-size: 1.25rem; line-height: 1.35; font-weight: 600; } }
+.tpe-links-row { display: flex; flex-wrap: wrap; gap: 0 $spacing-07; }
+
+// A long email address may break anywhere rather than push the page sideways on small phones.
+.tpe-email { overflow-wrap: anywhere; }

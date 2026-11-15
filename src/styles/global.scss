@@ -133,7 +133,8 @@ section[id] { scroll-margin-top: $spacing-09; }
     list-style: none; display: flex; align-items: center; justify-content: center;
     width: $spacing-09; height: $spacing-09; cursor: pointer; color: var(--cds-text-primary);
     &::-webkit-details-marker { display: none; }
-    &:hover { background: var(--cds-background-hover); }
+    // Hover only where a mouse can hover: on phones a tap leaves :hover "stuck" after the menu closes
+    @media (hover: hover) { &:hover { background: var(--cds-background-hover); } }
   }
   .tpe-ic-close { display: none; }
   &[open] { .tpe-ic-open { display: none; } .tpe-ic-close { display: block; } summary { background: var(--cds-background-hover); } }

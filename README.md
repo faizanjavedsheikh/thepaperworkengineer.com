@@ -77,7 +77,7 @@ Don't take my word for any of the above. The code is right here. Read it.
 
 ## The small print
 
-Built with [Astro](https://astro.build), the [IBM Carbon](https://carbondesignsystem.com) design foundations and [IBM Plex](https://www.ibm.com/plex/) fonts (© IBM Corp., SIL Open Font License 1.1, see `public/fonts/OFL-IBM-Plex.txt`). Hosted on GitHub Pages.
+Built with [Astro](https://astro.build). Hosted on GitHub Pages.
 
 The words, the Paperwork Engineer character and the other pictures are mine. Please ask before you reuse them.
 

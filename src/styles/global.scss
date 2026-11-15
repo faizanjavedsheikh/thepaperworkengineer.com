@@ -110,6 +110,8 @@ section[id] { scroll-margin-top: $spacing-09; }
   display: flex; align-items: center; gap: $spacing-04; min-height: $spacing-09; padding-right: $spacing-05;
   color: var(--cds-text-primary); text-decoration: none;
   &:hover { color: var(--cds-text-primary); }
+  // under 384px the name and the header button don't both fit: keep the logo (the link's aria-label names it)
+  @media (max-width: 23.99rem) { .tpe-word { display: none; } }
   img { width: $spacing-07; height: $spacing-07; } // the logo file has its own rounded corners
 }
 .tpe-word { font-size: 1rem; font-weight: 600; white-space: nowrap; }
@@ -119,11 +121,12 @@ section[id] { scroll-margin-top: $spacing-09; }
   font-size: 1rem; color: var(--cds-text-primary); text-decoration: none; white-space: nowrap;
 }
 .tpe-hlinks a:hover { background: var(--cds-background-hover); color: var(--cds-text-primary); }
-.tpe-hcta { margin-left: auto; color: var(--cds-link-primary); gap: $spacing-03;
-  &:hover { background: var(--cds-background-hover); color: var(--cds-link-primary-hover); } }
-.tpe-hlinks a:focus-visible, .tpe-hcta:focus-visible { text-decoration: underline; }
+// Header "Let's talk": a full-height Carbon-style primary button, shown on every screen size
+.tpe-hcta { margin-left: auto; gap: $spacing-03; background: var(--cds-button-primary); color: #ffffff;
+  &:hover { background: var(--cds-button-primary-hover); color: #ffffff; }
+  &:focus-visible { outline: 2px solid var(--cds-focus); outline-offset: -2px; box-shadow: inset 0 0 0 3px #ffffff; } }
+.tpe-hlinks a:focus-visible { text-decoration: underline; }
 @include breakpoint(md) { .tpe-hlinks { display: flex; } .tpe-menu { display: none; } }
-@include breakpoint-down(md) { .tpe-hcta { display: none; } }
 .tpe-menu {
   margin-left: -$spacing-05;
   summary {
